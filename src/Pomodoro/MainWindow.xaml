@@ -5,8 +5,47 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Pomodoro"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
-
+        Title="Pomodoro" Height="400" Width="600" MinHeight="400" MinWidth="600">
+    <Window.Resources>
+        <Style x:Key="textStyle" TargetType="{x:Type TextBlock}">
+            <Setter Property="FontFamily" Value="Arial Rounded MT Bold" />
+            <Setter Property="FontSize" Value="24" />
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Margin" Value="10,10,10,10" />
+        </Style>
+        <Style x:Key="roundedButtonStyle" TargetType="{x:Type Button}">
+            <Setter Property="FontFamily" Value="Arial Rounded MT Bold" />
+            <Setter Property="FontSize" Value="24" />
+            <Setter Property="Margin" Value="10,10,10,10" />
+            <Style.Resources>
+                <Style TargetType="Border">
+                    <Setter Property="CornerRadius" Value="5"/>
+                </Style>
+            </Style.Resources>
+        </Style>
+    </Window.Resources>
+    <Grid Background="#FF333333">
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="200"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition Width="100"/>
+            <ColumnDefinition Width="100"/>
+            <ColumnDefinition Width="100"/>
+            <ColumnDefinition Width="100"/>
+            <ColumnDefinition Width="100"/>
+            <ColumnDefinition Width="100"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <TextBlock x:Name="timeDisplayText" Text="00:00" Style="{StaticResource textStyle}" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="6" FontSize="120" Foreground="White"/>
+        <TextBlock x:Name="finishText" Text="Finished: 0" Style="{StaticResource textStyle}" Grid.ColumnSpan="3" Foreground="WhiteSmoke"/>
+        <TextBlock x:Name="statusText" Text="Pomodoro" Style="{StaticResource textStyle}" Grid.Column="3" Grid.ColumnSpan="2" Foreground="WhiteSmoke"/>
+        <Button x:Name="startButton" Content="Start" Style="{StaticResource roundedButtonStyle}" Grid.Column="3" Grid.ColumnSpan="2" Grid.Row="2" Height="60"/>
+        <Button x:Name="stopButton" Content="Stop" Style="{StaticResource roundedButtonStyle}" Grid.Column="2" Grid.Row="2" Height="60"/>
+        <Button x:Name="nextButton" Content="Next" Style="{StaticResource roundedButtonStyle}" Grid.Column="5" Grid.Row="2" Height="60"/>
     </Grid>
 </Window>
