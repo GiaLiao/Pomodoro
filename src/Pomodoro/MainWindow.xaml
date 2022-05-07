@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Pomodoro"
         mc:Ignorable="d"
-        Title="Pomodoro" Height="400" Width="600" MinHeight="400" MinWidth="600">
+        Title="Pomodoro" Height="400" Width="600" MinHeight="400" MinWidth="600" Initialized="Window_Initialized">
     <Window.Resources>
         <Style x:Key="textStyle" TargetType="{x:Type TextBlock}">
             <Setter Property="FontFamily" Value="Arial Rounded MT Bold" />
