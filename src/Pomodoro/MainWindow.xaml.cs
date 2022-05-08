@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 
 namespace Pomodoro
 {
@@ -33,6 +34,7 @@ namespace Pomodoro
         int pomodorosPerRound = 4;
         List<int> intervals = new List<int> { 25, 5, 30 };
         TimeSpan intervalTime;
+        DispatcherTimer dispatcherTimer = new DispatcherTimer();
 
         public MainWindow()
         {
@@ -41,6 +43,10 @@ namespace Pomodoro
 
         private void Window_Initialized(object sender, EventArgs e)
         {
+            // DispatcherTimer setup
+            dispatcherTimer.Tick += new EventHandler(dispatcherTimer_Tick);
+            dispatcherTimer.Interval = new TimeSpan(0, 0, 1);
+
             // update UI
             UpdateWithStatus();
             UpdateWithFinishedCounter();
@@ -48,6 +54,7 @@ namespace Pomodoro
 
         private void UpdateWithStatus()
         {
+			this.Title = "Pomodoro";
             int interval = intervals[(int)status];
             intervalTime = TimeSpan.FromMinutes(interval);
             timeDisplayText.Text = GetDisplayTime(intervalTime);
@@ -57,6 +64,19 @@ namespace Pomodoro
         private void UpdateWithFinishedCounter()
         {
             finishText.Text = $"Finished: {finishedCounter}";
+        }
+
+        private void NextStatus()
+        {
+            ++intervalCounter;
+            int intervalsPerRound = pomodorosPerRound * 2 + 1;
+            intervalCounter %= intervalsPerRound;
+            if (intervalCounter == intervalsPerRound - 1)
+                status = Status.LongBreak;
+            else if (intervalCounter % 2 == 1)
+                status = Status.ShortBreak;
+            else
+                status = Status.Pomodoro;
         }
 
         private string GetStatusText()
@@ -78,6 +98,51 @@ namespace Pomodoro
         private string GetDisplayTime(TimeSpan time)
         {
             return String.Format($@"{(int)time.TotalMinutes:00}:{time.Seconds:00}");
+        }
+
+        private void dispatcherTimer_Tick(object sender, EventArgs e)
+        {
+            if (intervalTime.TotalSeconds > 0)
+            {
+                intervalTime = intervalTime.Subtract(TimeSpan.FromSeconds(1));
+                string currentTime = GetDisplayTime(intervalTime);
+                this.Title = $"{currentTime} - Pomodoro";
+                timeDisplayText.Text = currentTime;
+            }
+            else
+            {
+                dispatcherTimer.Stop();
+                System.Media.SystemSounds.Beep.Play();
+                MessageBox.Show("Time's up!", "Pomodoro");
+
+                if (status == Status.Pomodoro)
+                {
+                    ++finishedCounter;
+                    UpdateWithFinishedCounter();
+                }
+
+                NextStatus();
+                UpdateWithStatus();
+
+                startButton.Content = "Start";
+                nextButton.IsEnabled = true;
+            }
+        }
+
+        private void startButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (!dispatcherTimer.IsEnabled)
+            {
+                startButton.Content = "Pause";
+                nextButton.IsEnabled = false;
+                dispatcherTimer.Start();
+            }
+            else
+            {
+                dispatcherTimer.Stop();
+                startButton.Content = "Start";
+                nextButton.IsEnabled = true;
+            }
         }
     }
 }
