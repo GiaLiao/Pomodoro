@@ -144,5 +144,19 @@ namespace Pomodoro
                 nextButton.IsEnabled = true;
             }
         }
+
+        private void stopButton_Click(object sender, RoutedEventArgs e)
+        {
+            dispatcherTimer.Stop();
+            UpdateWithStatus();
+            startButton.Content = "Start";
+            nextButton.IsEnabled = true;
+        }
+
+        private void nextButton_Click(object sender, RoutedEventArgs e)
+        {
+            NextStatus();
+            UpdateWithStatus();
+        }
     }
 }

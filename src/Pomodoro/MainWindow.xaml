@@ -45,7 +45,7 @@
         <TextBlock x:Name="finishText" Text="Finished: 0" Style="{StaticResource textStyle}" Grid.ColumnSpan="3" Foreground="WhiteSmoke"/>
         <TextBlock x:Name="statusText" Text="Pomodoro" Style="{StaticResource textStyle}" Grid.Column="3" Grid.ColumnSpan="2" Foreground="WhiteSmoke"/>
         <Button x:Name="startButton" Content="Start" Style="{StaticResource roundedButtonStyle}" Grid.Column="3" Grid.ColumnSpan="2" Grid.Row="2" Height="60" Click="startButton_Click"/>
-        <Button x:Name="stopButton" Content="Stop" Style="{StaticResource roundedButtonStyle}" Grid.Column="2" Grid.Row="2" Height="60"/>
-        <Button x:Name="nextButton" Content="Next" Style="{StaticResource roundedButtonStyle}" Grid.Column="5" Grid.Row="2" Height="60"/>
+        <Button x:Name="stopButton" Content="Stop" Style="{StaticResource roundedButtonStyle}" Grid.Column="2" Grid.Row="2" Height="60" Click="stopButton_Click"/>
+        <Button x:Name="nextButton" Content="Next" Style="{StaticResource roundedButtonStyle}" Grid.Column="5" Grid.Row="2" Height="60" Click="nextButton_Click"/>
     </Grid>
 </Window>
