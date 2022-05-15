@@ -123,9 +123,7 @@ namespace Pomodoro
 
                 NextStatus();
                 UpdateWithStatus();
-
-                startButton.Content = "Start";
-                nextButton.IsEnabled = true;
+                UpdateButtonsDisplay();
             }
         }
 
@@ -133,30 +131,41 @@ namespace Pomodoro
         {
             if (!dispatcherTimer.IsEnabled)
             {
-                startButton.Content = "Pause";
-                nextButton.IsEnabled = false;
                 dispatcherTimer.Start();
             }
             else
             {
                 dispatcherTimer.Stop();
-                startButton.Content = "Start";
-                nextButton.IsEnabled = true;
             }
+
+			UpdateButtonsDisplay();
         }
 
         private void stopButton_Click(object sender, RoutedEventArgs e)
         {
             dispatcherTimer.Stop();
             UpdateWithStatus();
-            startButton.Content = "Start";
-            nextButton.IsEnabled = true;
+            UpdateButtonsDisplay();
         }
 
         private void nextButton_Click(object sender, RoutedEventArgs e)
         {
             NextStatus();
             UpdateWithStatus();
+        }
+
+        private void UpdateButtonsDisplay()
+        {
+            if (dispatcherTimer.IsEnabled)
+            {
+                startButton.Content = "Pause";
+                nextButton.IsEnabled = false;
+            }
+            else
+            {
+                startButton.Content = "Start";
+                nextButton.IsEnabled = true;
+            }
         }
     }
 }
