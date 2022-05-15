@@ -1,0 +1,71 @@
+﻿<Window x:Class="Pomodoro.SettingsDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Pomodoro"
+        mc:Ignorable="d"
+        Title="Settings - Pomodoro" Height="400" Width="400" ResizeMode="NoResize"
+		Topmost="True" WindowStartupLocation="CenterScreen">
+    <Window.Resources>
+        <Style x:Key="settingTextStyle" TargetType="{x:Type TextBlock}">
+            <Setter Property="FontFamily" Value="Arial Rounded MT Bold" />
+            <Setter Property="FontSize" Value="20" />
+            <Setter Property="Foreground" Value="#FF1A1A1A" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Margin" Value="10" />
+        </Style>
+        <Style x:Key="settingBoxStyle" TargetType="{x:Type TextBox}">
+            <Setter Property="FontFamily" Value="Arial Rounded MT Bold" />
+            <Setter Property="FontSize" Value="20" />
+            <Setter Property="Margin" Value="10" />
+            <Setter Property="MaxLength" Value="3" />
+            <EventSetter Event="PreviewTextInput" Handler="NumericBox_PreviewTextInput"/>
+        </Style>
+        <Style x:Key="settingButtonStyle" TargetType="{x:Type Button}">
+            <Setter Property="FontFamily" Value="Arial Rounded MT Bold" />
+            <Setter Property="FontSize" Value="20" />
+            <Setter Property="Width" Value="140" />
+            <Setter Property="Height" Value="40" />
+            <Style.Resources>
+                <Style TargetType="Border">
+                    <Setter Property="CornerRadius" Value="5"/>
+                </Style>
+            </Style.Resources>
+        </Style>
+    </Window.Resources>
+	<DockPanel Background="WhiteSmoke">
+		<Grid DockPanel.Dock="Top" Margin="30" Height="200" VerticalAlignment="Top">
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="3*"/>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="1*"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock x:Name="pomodoroText" Text="Pomodoro" Style="{StaticResource settingTextStyle}"/>
+            <TextBlock x:Name="shortBreakText" Text="Short Break" Style="{StaticResource settingTextStyle}" Grid.Row="1"/>
+            <TextBlock x:Name="longBreakText" Text="Long Break" Style="{StaticResource settingTextStyle}" Grid.Row="2"/>
+            <TextBlock x:Name="roundText" Text="Round" Style="{StaticResource settingTextStyle}" Grid.Row="3"/>
+            <TextBox x:Name="pomodoroBox" Style="{StaticResource settingBoxStyle}" Grid.Column="1" Text="25"/>
+            <TextBox x:Name="shortBreakBox" Style="{StaticResource settingBoxStyle}" Grid.Column="1" Text="5" Grid.Row="1"/>
+            <TextBox x:Name="longBreakBox" Style="{StaticResource settingBoxStyle}" Grid.Column="1" Text="30" Grid.Row="2"/>
+            <TextBox x:Name="roundBox" Style="{StaticResource settingBoxStyle}" Grid.Column="1" Text="4" MaxLines="1" Grid.Row="3"/>
+            <TextBlock x:Name="pomodoroUnitText" Text="min" Style="{StaticResource settingTextStyle}" Grid.Column="2"/>
+            <TextBlock x:Name="shortBreakUnitText" Text="min" Style="{StaticResource settingTextStyle}" Grid.Column="2" Grid.Row="1"/>
+            <TextBlock x:Name="longBreakUnitText" Text="min" Style="{StaticResource settingTextStyle}" Grid.Column="2" Grid.Row="2"/>
+        </Grid>
+		<Grid Margin="30" DockPanel.Dock="Bottom">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Button x:Name="OKButton" Content="OK" Style="{StaticResource settingButtonStyle}" Grid.Column="0" Click="OKButton_Click"/>
+            <Button x:Name="cancelButton" Content="Cancel" Style="{StaticResource settingButtonStyle}" Grid.Column="1" IsCancel="True"/>
+        </Grid>
+	</DockPanel>
+</Window>

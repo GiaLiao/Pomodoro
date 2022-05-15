@@ -154,6 +154,26 @@ namespace Pomodoro
             UpdateWithStatus();
         }
 
+        private void settingsButton_Click(object sender, RoutedEventArgs e)
+        {
+            SettingsDialog settings = new SettingsDialog(intervals, pomodorosPerRound);
+            if (settings.ShowDialog() == true)
+            {
+                if (intervals.SequenceEqual(settings.Intervals) == false || pomodorosPerRound != settings.Round)
+                {
+                    intervals = settings.Intervals;
+                    pomodorosPerRound = settings.Round;
+
+                    intervalCounter = 0;
+                    finishedCounter = 0;
+
+                    dispatcherTimer.Stop();
+                    UpdateWithStatus();
+                    UpdateButtonsDisplay();
+                }
+            }
+        }
+
         private void UpdateButtonsDisplay()
         {
             if (dispatcherTimer.IsEnabled)
