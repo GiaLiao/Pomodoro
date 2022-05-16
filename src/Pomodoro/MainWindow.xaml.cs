@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -43,6 +44,18 @@ namespace Pomodoro
 
         private void Window_Initialized(object sender, EventArgs e)
         {
+            // try to load user settings
+            try
+            {
+                var appSettings = ConfigurationManager.AppSettings;
+                foreach (var value in Enum.GetValues(typeof(Status)))
+                    intervals[(int)value] = int.Parse(appSettings[value.ToString()]);
+                pomodorosPerRound = int.Parse(appSettings["Round"]);
+            }
+            catch
+            {
+            }
+
             // DispatcherTimer setup
             dispatcherTimer.Tick += new EventHandler(dispatcherTimer_Tick);
             dispatcherTimer.Interval = new TimeSpan(0, 0, 1);
@@ -50,6 +63,25 @@ namespace Pomodoro
             // update UI
             UpdateWithStatus();
             UpdateWithFinishedCounter();
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            // try to save user settings
+            try
+            {
+                var configFile = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+                var settings = configFile.AppSettings.Settings;
+
+                foreach (var value in Enum.GetValues(typeof(Status)))
+                    settings[value.ToString()].Value = intervals[(int)value].ToString();
+                settings["Round"].Value = pomodorosPerRound.ToString();
+
+                configFile.Save(ConfigurationSaveMode.Full);
+            }
+            catch
+            {
+            }
         }
 
         private void UpdateWithStatus()
