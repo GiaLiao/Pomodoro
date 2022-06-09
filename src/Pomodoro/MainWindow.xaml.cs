@@ -86,11 +86,11 @@ namespace Pomodoro
 
         private void UpdateWithStatus()
         {
-			this.Title = "Pomodoro";
-            int interval = intervals[(int)status];
+			int interval = intervals[(int)status];
             intervalTime = TimeSpan.FromMinutes(interval);
             timeDisplayText.Text = GetDisplayTime(intervalTime);
             statusText.Text = GetStatusText();
+            this.Title = statusText.Text;
         }
 
         private void UpdateWithFinishedCounter()
@@ -137,15 +137,14 @@ namespace Pomodoro
             if (intervalTime.TotalSeconds > 0)
             {
                 intervalTime = intervalTime.Subtract(TimeSpan.FromSeconds(1));
-                string currentTime = GetDisplayTime(intervalTime);
-                this.Title = $"{currentTime} - Pomodoro";
-                timeDisplayText.Text = currentTime;
+                timeDisplayText.Text = GetDisplayTime(intervalTime);
+                this.Title = $"{timeDisplayText.Text} - {statusText.Text}";
             }
             else
             {
                 dispatcherTimer.Stop();
                 System.Media.SystemSounds.Beep.Play();
-                MessageBox.Show("Time's up!", "Pomodoro");
+                MessageBox.Show("Time's up!", statusText.Text);
 
                 if (status == Status.Pomodoro)
                 {
