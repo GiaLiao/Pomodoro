@@ -200,6 +200,7 @@ namespace Pomodoro
 
                     dispatcherTimer.Stop();
                     UpdateWithStatus();
+                    UpdateWithFinishedCounter();
                     UpdateButtonsDisplay();
                 }
             }
