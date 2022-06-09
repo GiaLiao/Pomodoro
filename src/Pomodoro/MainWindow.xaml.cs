@@ -17,7 +17,7 @@ using System.Windows.Threading;
 
 namespace Pomodoro
 {
-    public enum Status
+    public enum PomodoroStatus
     {
         Pomodoro,
         ShortBreak,
@@ -29,7 +29,7 @@ namespace Pomodoro
     /// </summary>
     public partial class MainWindow : Window
     {
-        Status status = Status.Pomodoro;
+        PomodoroStatus status = PomodoroStatus.Pomodoro;
         int intervalCounter = 0;
         int finishedCounter = 0;
         int pomodorosPerRound = 4;
@@ -48,7 +48,7 @@ namespace Pomodoro
             try
             {
                 var appSettings = ConfigurationManager.AppSettings;
-                foreach (var value in Enum.GetValues(typeof(Status)))
+                foreach (var value in Enum.GetValues(typeof(PomodoroStatus)))
                     intervals[(int)value] = int.Parse(appSettings[value.ToString()]);
                 pomodorosPerRound = int.Parse(appSettings["Round"]);
             }
@@ -73,7 +73,7 @@ namespace Pomodoro
                 var configFile = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
                 var settings = configFile.AppSettings.Settings;
 
-                foreach (var value in Enum.GetValues(typeof(Status)))
+                foreach (var value in Enum.GetValues(typeof(PomodoroStatus)))
                     settings[value.ToString()].Value = intervals[(int)value].ToString();
                 settings["Round"].Value = pomodorosPerRound.ToString();
 
@@ -104,22 +104,22 @@ namespace Pomodoro
             int intervalsPerRound = pomodorosPerRound * 2 + 1;
             intervalCounter %= intervalsPerRound;
             if (intervalCounter == intervalsPerRound - 1)
-                status = Status.LongBreak;
+                status = PomodoroStatus.LongBreak;
             else if (intervalCounter % 2 == 1)
-                status = Status.ShortBreak;
+                status = PomodoroStatus.ShortBreak;
             else
-                status = Status.Pomodoro;
+                status = PomodoroStatus.Pomodoro;
         }
 
         private string GetStatusText()
         {
             switch (status)
             {
-                case Status.Pomodoro:
+                case PomodoroStatus.Pomodoro:
                     return "Pomodoro";
-                case Status.ShortBreak:
+                case PomodoroStatus.ShortBreak:
                     return "Short Break";
-                case Status.LongBreak:
+                case PomodoroStatus.LongBreak:
                     return "Long Break";
                 default:
                     break;
@@ -146,7 +146,7 @@ namespace Pomodoro
                 System.Media.SystemSounds.Beep.Play();
                 MessageBox.Show("Time's up!", statusText.Text);
 
-                if (status == Status.Pomodoro)
+                if (status == PomodoroStatus.Pomodoro)
                 {
                     ++finishedCounter;
                     UpdateWithFinishedCounter();

@@ -24,9 +24,9 @@ namespace Pomodoro
         {
             InitializeComponent();
 
-            pomodoroBox.Text = defaultIntervals[(int)Status.Pomodoro].ToString();
-            shortBreakBox.Text = defaultIntervals[(int)Status.ShortBreak].ToString();
-            longBreakBox.Text = defaultIntervals[(int)Status.LongBreak].ToString();
+            pomodoroBox.Text = defaultIntervals[(int)PomodoroStatus.Pomodoro].ToString();
+            shortBreakBox.Text = defaultIntervals[(int)PomodoroStatus.ShortBreak].ToString();
+            longBreakBox.Text = defaultIntervals[(int)PomodoroStatus.LongBreak].ToString();
             roundBox.Text = defaultRound.ToString();
         }
 
