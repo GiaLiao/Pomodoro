@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Configuration;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -27,19 +29,66 @@ namespace Pomodoro
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : Window, INotifyPropertyChanged
     {
-        PomodoroStatus status = PomodoroStatus.Pomodoro;
-        int intervalCounter = 0;
-        int finishedCounter = 0;
-        int pomodorosPerRound = 4;
-        List<int> intervals = new List<int> { 25, 5, 30 };
-        TimeSpan intervalTime;
-        DispatcherTimer dispatcherTimer = new DispatcherTimer();
+        private PomodoroStatus status = PomodoroStatus.Pomodoro;
+        private int intervalCounter = 0;
+        private int finishedCounter = 0;
+        private int pomodorosPerRound = 4;
+        private List<int> intervals = new List<int> { 25, 5, 30 };
+        private TimeSpan intervalTime;
+        private DispatcherTimer dispatcherTimer = new DispatcherTimer();
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        private void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        public PomodoroStatus Status
+        {
+            get { return this.status; }
+            set { this.status = value; NotifyPropertyChanged(); }
+        }
+
+        public int FinishedCounter
+        {
+            get { return this.finishedCounter; }
+            set { this.finishedCounter = value; NotifyPropertyChanged(); }
+        }
+
+        public TimeSpan IntervalTime
+        {
+            get { return this.intervalTime; }
+            set { this.intervalTime = value; NotifyPropertyChanged(); }
+        }
+
+        public static string GetStatusText(PomodoroStatus pomodoroStatus)
+        {
+            switch (pomodoroStatus)
+            {
+                case PomodoroStatus.Pomodoro:
+                    return "Pomodoro";
+                case PomodoroStatus.ShortBreak:
+                    return "Short Break";
+                case PomodoroStatus.LongBreak:
+                    return "Long Break";
+                default:
+                    break;
+            }
+            return String.Empty;
+        }
+
+        public static string GetDisplayTime(TimeSpan time)
+        {
+            return String.Format($@"{(int)time.TotalMinutes:00}:{time.Seconds:00}");
+        }
 
         public MainWindow()
         {
             InitializeComponent();
+            this.DataContext = this;
         }
 
         private void Window_Initialized(object sender, EventArgs e)
@@ -60,9 +109,7 @@ namespace Pomodoro
             dispatcherTimer.Tick += new EventHandler(dispatcherTimer_Tick);
             dispatcherTimer.Interval = new TimeSpan(0, 0, 1);
 
-            // update UI
-            UpdateWithStatus();
-            UpdateWithFinishedCounter();
+            ResetStatusInterval();
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -84,18 +131,10 @@ namespace Pomodoro
             }
         }
 
-        private void UpdateWithStatus()
+        private void ResetStatusInterval()
         {
-			int interval = intervals[(int)status];
-            intervalTime = TimeSpan.FromMinutes(interval);
-            timeDisplayText.Text = GetDisplayTime(intervalTime);
-            statusText.Text = GetStatusText();
-            this.Title = statusText.Text;
-        }
-
-        private void UpdateWithFinishedCounter()
-        {
-            finishText.Text = $"Finished: {finishedCounter}";
+			int interval = intervals[(int)Status];
+            IntervalTime = TimeSpan.FromMinutes(interval);
         }
 
         private void NextStatus()
@@ -104,41 +143,18 @@ namespace Pomodoro
             int intervalsPerRound = pomodorosPerRound * 2 + 1;
             intervalCounter %= intervalsPerRound;
             if (intervalCounter == intervalsPerRound - 1)
-                status = PomodoroStatus.LongBreak;
+                Status = PomodoroStatus.LongBreak;
             else if (intervalCounter % 2 == 1)
-                status = PomodoroStatus.ShortBreak;
+                Status = PomodoroStatus.ShortBreak;
             else
-                status = PomodoroStatus.Pomodoro;
-        }
-
-        private string GetStatusText()
-        {
-            switch (status)
-            {
-                case PomodoroStatus.Pomodoro:
-                    return "Pomodoro";
-                case PomodoroStatus.ShortBreak:
-                    return "Short Break";
-                case PomodoroStatus.LongBreak:
-                    return "Long Break";
-                default:
-                    break;
-            }
-            return String.Empty;
-        }
-
-        private string GetDisplayTime(TimeSpan time)
-        {
-            return String.Format($@"{(int)time.TotalMinutes:00}:{time.Seconds:00}");
+                Status = PomodoroStatus.Pomodoro;
         }
 
         private void dispatcherTimer_Tick(object sender, EventArgs e)
         {
-            if (intervalTime.TotalSeconds > 0)
+            if (IntervalTime.TotalSeconds > 0)
             {
-                intervalTime = intervalTime.Subtract(TimeSpan.FromSeconds(1));
-                timeDisplayText.Text = GetDisplayTime(intervalTime);
-                this.Title = $"{timeDisplayText.Text} - {statusText.Text}";
+                IntervalTime = IntervalTime.Subtract(TimeSpan.FromSeconds(1));
             }
             else
             {
@@ -146,14 +162,13 @@ namespace Pomodoro
                 System.Media.SystemSounds.Beep.Play();
                 MessageBox.Show("Time's up!", statusText.Text);
 
-                if (status == PomodoroStatus.Pomodoro)
+                if (Status == PomodoroStatus.Pomodoro)
                 {
-                    ++finishedCounter;
-                    UpdateWithFinishedCounter();
+                    ++FinishedCounter;
                 }
 
                 NextStatus();
-                UpdateWithStatus();
+                ResetStatusInterval();
                 UpdateButtonsDisplay();
             }
         }
@@ -175,14 +190,14 @@ namespace Pomodoro
         private void stopButton_Click(object sender, RoutedEventArgs e)
         {
             dispatcherTimer.Stop();
-            UpdateWithStatus();
+            ResetStatusInterval();
             UpdateButtonsDisplay();
         }
 
         private void nextButton_Click(object sender, RoutedEventArgs e)
         {
             NextStatus();
-            UpdateWithStatus();
+            ResetStatusInterval();
         }
 
         private void settingsButton_Click(object sender, RoutedEventArgs e)
@@ -196,11 +211,10 @@ namespace Pomodoro
                     pomodorosPerRound = settings.Round;
 
                     intervalCounter = 0;
-                    finishedCounter = 0;
+                    FinishedCounter = 0;
 
                     dispatcherTimer.Stop();
-                    UpdateWithStatus();
-                    UpdateWithFinishedCounter();
+                    ResetStatusInterval();
                     UpdateButtonsDisplay();
                 }
             }
@@ -218,6 +232,35 @@ namespace Pomodoro
                 startButton.Content = "Start";
                 nextButton.IsEnabled = true;
             }
+        }
+    }
+
+    public class PomodoroStatusToStringConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            return MainWindow.GetStatusText((PomodoroStatus)value);
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            return DependencyProperty.UnsetValue;
+        }
+    }
+
+    public class TimerToStringConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            if (value is TimeSpan time)
+                return MainWindow.GetDisplayTime(time);
+            else
+                return String.Empty;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            return DependencyProperty.UnsetValue;
         }
     }
 }

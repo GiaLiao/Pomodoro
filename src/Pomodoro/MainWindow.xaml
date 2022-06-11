@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Pomodoro"
         mc:Ignorable="d"
-        Title="Pomodoro" Height="400" Width="600" MinHeight="400" MinWidth="600"
+        Height="400" Width="600" MinHeight="400" MinWidth="600"
         Initialized="Window_Initialized" Closing="Window_Closing">
     <Window.Resources>
         <Style x:Key="textStyle" TargetType="{x:Type TextBlock}">
@@ -25,7 +25,15 @@
                 </Style>
             </Style.Resources>
         </Style>
+        <local:PomodoroStatusToStringConverter x:Key="PomodoroStatusToStringConverter" />
+        <local:TimerToStringConverter x:Key="TimerToStringConverter" />
     </Window.Resources>
+    <Window.Title>
+        <MultiBinding StringFormat="{}{0} - {1}">
+            <Binding Path="Text" ElementName="timeDisplayText" />
+            <Binding Path="Text" ElementName="statusText" />
+        </MultiBinding>
+    </Window.Title>
     <Grid Background="#FF333333">
         <Grid.RowDefinitions>
             <RowDefinition/>
@@ -42,9 +50,9 @@
             <ColumnDefinition Width="100"/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
-        <TextBlock x:Name="timeDisplayText" Text="00:00" Style="{StaticResource textStyle}" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="6" FontSize="120" Foreground="White"/>
-        <TextBlock x:Name="finishText" Text="Finished: 0" Style="{StaticResource textStyle}" Grid.ColumnSpan="3" Foreground="WhiteSmoke"/>
-        <TextBlock x:Name="statusText" Text="Pomodoro" Style="{StaticResource textStyle}" Grid.Column="3" Grid.ColumnSpan="2" Foreground="WhiteSmoke"/>
+        <TextBlock x:Name="statusText" Text="{Binding Status, Converter={StaticResource PomodoroStatusToStringConverter}}" Style="{StaticResource textStyle}" Grid.Column="3" Grid.ColumnSpan="2" Foreground="WhiteSmoke"/>
+        <TextBlock x:Name="finishText" Text="{Binding FinishedCounter, StringFormat=Finished: {0}}" Style="{StaticResource textStyle}" Grid.ColumnSpan="3" Foreground="WhiteSmoke"/>
+        <TextBlock x:Name="timeDisplayText" Text="{Binding IntervalTime, Converter={StaticResource TimerToStringConverter}}" Style="{StaticResource textStyle}" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="6" FontSize="120" Foreground="White"/>
         <Button x:Name="startButton" Content="Start" Style="{StaticResource roundedButtonStyle}" Grid.Column="3" Grid.ColumnSpan="2" Grid.Row="2" Height="60" Click="startButton_Click"/>
         <Button x:Name="stopButton" Content="Stop" Style="{StaticResource roundedButtonStyle}" Grid.Column="2" Grid.Row="2" Height="60" Click="stopButton_Click"/>
         <Button x:Name="nextButton" Content="Next" Style="{StaticResource roundedButtonStyle}" Grid.Column="5" Grid.Row="2" Height="60" Click="nextButton_Click"/>
